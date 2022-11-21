@@ -25,6 +25,17 @@ if [ $EVENT_POLL = YES ]; then
 fi
 
 
+if [ $EVENT_DEMIKERNEL = NO -a $EVENT_FOUND = NO ]; then
+    EVENT_DEMIKERNEL=YES
+fi
+
+if [ $EVENT_DEMIKERNEL = YES ]; then
+    have=NGX_HAVE_DEMIKERNEL . auto/have
+    CORE_SRCS="$CORE_SRCS $DEMIKERNEL_SRCS"
+    EVENT_MODULES="$EVENT_MODULES $DEMIKERNEL_MODULE"
+fi
+
+
 if [ $NGX_TEST_BUILD_DEVPOLL = YES ]; then
     have=NGX_HAVE_DEVPOLL . auto/have
     have=NGX_TEST_BUILD_DEVPOLL . auto/have

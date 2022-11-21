@@ -26,6 +26,17 @@ typedef struct {
 
 #endif
 
+#if (NGX_HAVE_DEMIKERNEL)
+
+typedef struct {
+    union {
+        demi_sgarray_t sga;
+        demi_accept_result_t ares;
+    } qr_value;
+} ngx_event_dmkr_t;
+
+#endif
+
 
 struct ngx_event_s {
     void            *data;
@@ -105,6 +116,10 @@ struct ngx_event_s {
 
 #if (NGX_HAVE_IOCP)
     ngx_event_ovlp_t ovlp;
+#endif
+
+#if (NGX_HAVE_DEMIKERNEL)
+    ngx_event_dmkr_t dmkr;
 #endif
 
     ngx_uint_t       index;
@@ -267,6 +282,11 @@ extern ngx_uint_t            ngx_use_epoll_rdhup;
  */
 #define NGX_USE_VNODE_EVENT      0x00002000
 
+/*
+ * The event filter is demikernel.
+ */
+#define NGX_USE_DEMIKERNEL_EVENT 0x00004000
+
 
 /*
  * The event filter is deleted just before the closing file.
@@ -384,6 +404,10 @@ extern ngx_uint_t            ngx_use_epoll_rdhup;
 #define NGX_IOCP_ACCEPT      0
 #define NGX_IOCP_IO          1
 #define NGX_IOCP_CONNECT     2
+#endif
+
+#if (NGX_HAVE_DEMIKERNEL)
+#define NGX_DEMIKERNEL_ACCEPT      0
 #endif
 
 

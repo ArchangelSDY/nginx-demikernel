@@ -206,6 +206,8 @@ do
         --without-select_module)         EVENT_SELECT=NONE          ;;
         --with-poll_module)              EVENT_POLL=YES             ;;
         --without-poll_module)           EVENT_POLL=NONE            ;;
+        --with-demikernel_module)        EVENT_DEMIKERNEL=YES       ;;
+        --without-demikernel_module)     EVENT_DEMIKERNEL=NONE      ;;
 
         --with-threads)                  USE_THREADS=YES            ;;
 

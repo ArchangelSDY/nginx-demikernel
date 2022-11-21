@@ -57,8 +57,9 @@ ngx_event_accept(ngx_event_t *ev)
 
     do {
         socklen = sizeof(ngx_sockaddr_t);
-
-#if (NGX_HAVE_ACCEPT4)
+#if (NGX_HAVE_DEMIKERNEL)
+        s = ev->dmkr.qr_value.ares.qd;
+#elif (NGX_HAVE_ACCEPT4)
         if (use_accept4) {
             s = accept4(lc->fd, &sa.sockaddr, &socklen, SOCK_NONBLOCK);
         } else {

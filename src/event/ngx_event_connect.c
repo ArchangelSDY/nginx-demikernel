@@ -149,7 +149,12 @@ ngx_event_connect_peer(ngx_peer_connection_t *pc)
 
 #endif
 
+#if (NGX_HAVE_DEMIKERNEL)
+        if (demi_bind(s, pc->local->sockaddr, pc->local->socklen) == -1) {
+
+#else
         if (bind(s, pc->local->sockaddr, pc->local->socklen) == -1) {
+#endif
             ngx_log_error(NGX_LOG_CRIT, pc->log, ngx_socket_errno,
                           "bind(%V) failed", &pc->local->name);
 

@@ -25,6 +25,10 @@
 #elif (NGX_LINUX)
 #include <ngx_linux_config.h>
 
+#if (NGX_HAVE_DEMIKERNEL)
+#include <ngx_demikernel_config.h>
+#endif
+
 
 #elif (NGX_SOLARIS)
 #include <ngx_solaris_config.h>

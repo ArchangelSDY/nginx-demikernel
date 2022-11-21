@@ -1,0 +1,45 @@
+
+    ngx_feature="Demikernel"
+    ngx_feature_name=
+    ngx_feature_run=no
+    ngx_feature_incs="#include <demi/libos.h>
+                      #include <demi/types.h>
+                      #include <demi/sga.h>
+                      #include <demi/wait.h>"
+    ngx_feature_path=$DEMIKERNEL_INC
+    ngx_feature_test="demi_init(0, NULL)"
+
+    ngx_demikernel_opt_I="-I$DEMIKERNEL_INC"
+    ngx_demikernel_opt_L="-L$DEMIKERNEL_LIB"
+
+    CC_TEST_FLAGS="$CC_TEST_FLAGS $ngx_demikernel_opt_I"
+
+    if [ $NGX_RPATH = YES ]; then
+        ngx_feature_libs="-R$DEMIKERNEL_LIB $ngx_demikernel_opt_L -ldemikernel"
+    else
+        ngx_feature_libs="$ngx_demikernel_opt_L -ldemikernel"
+    fi
+
+    . auto/feature
+
+
+if [ $ngx_found = yes ]; then
+
+    CORE_INCS="$CORE_INCS $ngx_feature_path"
+
+    if [ $EVENT_DEMIKERNEL = YES ]; then
+        CORE_LIBS="$CORE_LIBS $ngx_feature_libs"
+    fi
+
+    NGX_LIB_DEMIKERNEL=$ngx_feature_libs
+else
+
+cat << END
+
+$0: error: the Demikernel module requires the Demikernel library.
+You can either do not enable the module or install the library.
+
+END
+
+    exit 1
+fi

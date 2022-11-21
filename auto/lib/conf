@@ -52,3 +52,7 @@ fi
 if [ $NGX_LIBATOMIC != NO ]; then
     . auto/lib/libatomic/conf
 fi
+
+if [ $EVENT_DEMIKERNEL = YES ]; then
+    . auto/lib/demikernel/conf
+fi

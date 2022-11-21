@@ -654,7 +654,11 @@ ngx_open_listening_sockets(ngx_cycle_t *cycle)
                 continue;
             }
 
+#if (NGX_HAVE_DEMIKERNEL)
+            if (demi_listen(s, ls[i].backlog) == -1) {
+#else
             if (listen(s, ls[i].backlog) == -1) {
+#endif
                 err = ngx_socket_errno;
 
                 /*
@@ -857,7 +861,11 @@ ngx_configure_listening_sockets(ngx_cycle_t *cycle)
 
             /* change backlog via listen() */
 
+#if (NGX_HAVE_DEMIKERNEL)
+            if (demi_listen(ls[i].fd, ls[i].backlog) == -1) {
+#else
             if (listen(ls[i].fd, ls[i].backlog) == -1) {
+#endif
                 ngx_log_error(NGX_LOG_ALERT, cycle->log, ngx_socket_errno,
                               "listen() to %V, backlog %d failed, ignored",
                               &ls[i].addr_text, ls[i].backlog);

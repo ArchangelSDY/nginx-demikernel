@@ -905,6 +905,18 @@ ngx_event_process_init(ngx_cycle_t *cycle)
 
 #endif
 
+#if (NGX_HAVE_DEMIKERNEL)
+        if (ngx_event_flags & NGX_USE_DEMIKERNEL_EVENT) {
+            if (ngx_add_event(rev, NGX_READ_EVENT, NGX_DEMIKERNEL_ACCEPT)
+                == NGX_ERROR)
+            {
+                return NGX_ERROR;
+            }
+
+            continue;
+        }
+#endif
+
         if (ngx_add_event(rev, NGX_READ_EVENT, 0) == NGX_ERROR) {
             return NGX_ERROR;
         }
