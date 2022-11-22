@@ -23,6 +23,23 @@
 
 #if (NGX_HAVE_FIONBIO)
 
+#if (NGX_HAVE_DEMIKERNEL)
+
+int
+ngx_nonblocking(ngx_socket_t s)
+{
+    return 0;
+}
+
+
+int
+ngx_blocking(ngx_socket_t s)
+{
+    return 0;
+}
+
+#else
+
 int
 ngx_nonblocking(ngx_socket_t s)
 {
@@ -43,6 +60,8 @@ ngx_blocking(ngx_socket_t s)
 
     return ioctl(s, FIONBIO, &nb);
 }
+
+#endif
 
 #endif
 

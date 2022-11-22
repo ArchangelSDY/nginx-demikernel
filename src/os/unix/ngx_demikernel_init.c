@@ -106,7 +106,7 @@ ngx_demikernel_getsockopt(int sockfd, int level, int optname, void *optval, sock
 int
 ngx_demikernel_setsockopt(int sockfd, int level, int optname, const void *optval, socklen_t optlen)
 {
-    return -1;
+    return 0;
 }
 
 int

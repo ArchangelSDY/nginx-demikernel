@@ -68,17 +68,8 @@ ngx_module_t  ngx_demikernel_module = {
 static ngx_int_t
 ngx_demikernel_init(ngx_cycle_t *cycle, ngx_msec_t timer)
 {
-    char           *const demi_argv[] = { "--catnip" };
     demi_qtoken_t        *qts2;
     ngx_event_t         **evs2;
-    ngx_err_t             err;
-
-    err = demi_init(1, demi_argv);
-
-    if (err) {
-        ngx_log_error(NGX_LOG_ALERT, cycle->log, err, "demi_init() failed");
-        return NGX_ERROR;
-    }
 
     if (qts == NULL) {
         nqts = 0;

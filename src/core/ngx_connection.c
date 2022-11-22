@@ -601,7 +601,13 @@ ngx_open_listening_sockets(ngx_cycle_t *cycle)
             ngx_log_debug2(NGX_LOG_DEBUG_CORE, log, 0,
                            "bind() %V #%d ", &ls[i].addr_text, s);
 
+#if (NGX_HAVE_DEMIKERNEL)
+            err = demi_bind(s, ls[i].sockaddr, ls[i].socklen);
+            ngx_set_socket_errno(err);
+            if (err) {
+#else
             if (bind(s, ls[i].sockaddr, ls[i].socklen) == -1) {
+#endif
                 err = ngx_socket_errno;
 
                 if (err != NGX_EADDRINUSE || !ngx_test_config) {
@@ -655,7 +661,9 @@ ngx_open_listening_sockets(ngx_cycle_t *cycle)
             }
 
 #if (NGX_HAVE_DEMIKERNEL)
-            if (demi_listen(s, ls[i].backlog) == -1) {
+            err = demi_listen(s, ls[i].backlog);
+            ngx_set_socket_errno(err);
+            if (err) {
 #else
             if (listen(s, ls[i].backlog) == -1) {
 #endif

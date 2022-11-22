@@ -228,6 +228,12 @@ main(int argc, char *const *argv)
     ngx_regex_init();
 #endif
 
+#if (NGX_HAVE_DEMIKERNEL)
+    if (demi_init(argc, argv) != 0) {
+        return 1;
+    }
+#endif
+
     ngx_pid = ngx_getpid();
     ngx_parent = ngx_getppid();
 
