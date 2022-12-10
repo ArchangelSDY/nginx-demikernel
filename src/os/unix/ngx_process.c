@@ -71,7 +71,9 @@ ngx_signal_t  signals[] = {
 
     { SIGINT, "SIGINT", "", ngx_signal_handler },
 
+#if (!HAVE_DEMIKERNEL)
     { SIGIO, "SIGIO", "", ngx_signal_handler },
+#endif
 
     { SIGCHLD, "SIGCHLD", "", ngx_signal_handler },
 

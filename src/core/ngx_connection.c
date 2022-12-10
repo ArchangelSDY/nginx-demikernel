@@ -870,7 +870,8 @@ ngx_configure_listening_sockets(ngx_cycle_t *cycle)
             /* change backlog via listen() */
 
 #if (NGX_HAVE_DEMIKERNEL)
-            if (demi_listen(ls[i].fd, ls[i].backlog) == -1) {
+            /* demikernel doesn't support a second listen */
+            if (0) {
 #else
             if (listen(ls[i].fd, ls[i].backlog) == -1) {
 #endif

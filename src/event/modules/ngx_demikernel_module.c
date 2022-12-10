@@ -159,6 +159,7 @@ ngx_demikernel_add_event(ngx_event_t *ev, ngx_int_t event, ngx_uint_t flags)
     }
 
     ev->index = nqts;
+    evs[nqts] = ev;
     nqts++;
 
     return NGX_OK;
@@ -187,7 +188,6 @@ ngx_demikernel_process_events(ngx_cycle_t *cycle, ngx_msec_t timer, ngx_uint_t f
     ngx_err_t           err;
     ngx_event_t        *ev;
     ngx_queue_t        *queue;
-    ngx_connection_t   *c;
     demi_qresult_t      qr;
     int                 offset;
 
@@ -232,26 +232,19 @@ ngx_demikernel_process_events(ngx_cycle_t *cycle, ngx_msec_t timer, ngx_uint_t f
         return NGX_ERROR;
     }
 
+    ev = evs[offset];
     nqts--;
     qts[offset] = qts[nqts];
-    evs[offset]->index = evs[nqts]->index;
-
-    c = ngx_cycle->files[qr.qr_qd];
-
-    if (c->fd == -1) {
-        ngx_log_error(NGX_LOG_ALERT, cycle->log, 0, "unexpected event");
-        return NGX_OK;
-    }
+    evs[offset] = evs[nqts];
+    evs[offset]->index = offset;
 
     switch (qr.qr_opcode) {
 
     case DEMI_OPC_PUSH:
-        ev = c->write;
         // TODO
         break;
 
     case DEMI_OPC_POP:
-        ev = c->read;
         ev->dmkr.qr_value.sga = qr.qr_value.sga;
         ev->available = qr.qr_value.sga.sga_segs[0].sgaseg_len;
         ev->ready = 1;
@@ -259,14 +252,12 @@ ngx_demikernel_process_events(ngx_cycle_t *cycle, ngx_msec_t timer, ngx_uint_t f
         break;
 
     case DEMI_OPC_ACCEPT:
-        ev = c->read;
         ev->dmkr.qr_value.ares = qr.qr_value.ares;
         // TODO
         break;
 
     case DEMI_OPC_CONNECT:
         // TODO
-        ev = c->read;
         break;
 
     default:

@@ -407,7 +407,7 @@ extern ngx_uint_t            ngx_use_epoll_rdhup;
 #endif
 
 #if (NGX_HAVE_DEMIKERNEL)
-#define NGX_DEMIKERNEL_ACCEPT      0
+#define NGX_DEMIKERNEL_ACCEPT      1
 #endif
 
 
