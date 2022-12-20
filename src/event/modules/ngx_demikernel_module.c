@@ -190,6 +190,7 @@ ngx_demikernel_process_events(ngx_cycle_t *cycle, ngx_msec_t timer, ngx_uint_t f
     ngx_queue_t        *queue;
     demi_qresult_t      qr;
     int                 offset;
+    struct timespec     timeout;
 
     /* NGX_TIMER_INFINITE == INFTIM */
 
@@ -205,7 +206,9 @@ ngx_demikernel_process_events(ngx_cycle_t *cycle, ngx_msec_t timer, ngx_uint_t f
 
     ngx_log_debug1(NGX_LOG_DEBUG_EVENT, cycle->log, 0, "demikernel timer: %M", timer);
 
-    err = demi_wait_any(&qr, &offset, qts, nqts);
+    timeout.tv_sec = timer / 1000;
+    timeout.tv_nsec = (timer % 1000) * 1000000;
+    err = demi_wait_any(&qr, &offset, qts, nqts, &timeout);
 
     if (flags & NGX_UPDATE_TIME || ngx_event_timer_alarm) {
         ngx_time_update();
