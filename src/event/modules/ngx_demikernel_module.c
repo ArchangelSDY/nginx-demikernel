@@ -137,8 +137,8 @@ ngx_demikernel_add_event(ngx_event_t *ev, ngx_int_t event, ngx_uint_t flags)
         return NGX_OK;
     }
 
-    ngx_log_debug2(NGX_LOG_DEBUG_EVENT, ev->log, 0,
-                   "demikernel add event: fd:%d ev:%i", c->fd, event);
+    ngx_log_debug3(NGX_LOG_DEBUG_EVENT, ev->log, 0,
+                   "demikernel add event: fd:%d ev:%i fl:%d", c->fd, event, flags);
 
     if (event == NGX_READ_EVENT) {
         if (flags & NGX_DEMIKERNEL_ACCEPT) {

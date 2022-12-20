@@ -59,6 +59,11 @@ ngx_event_accept(ngx_event_t *ev)
         socklen = sizeof(ngx_sockaddr_t);
 #if (NGX_HAVE_DEMIKERNEL)
         s = ev->dmkr.qr_value.ares.qd;
+
+        /* TODO: hack */
+        sa.sockaddr_in.sin_family = AF_INET;
+        sa.sockaddr_in.sin_port = htons(40000);
+        inet_pton(AF_INET, "10.180.0.6", &sa.sockaddr_in.sin_addr);
 #elif (NGX_HAVE_ACCEPT4)
         if (use_accept4) {
             s = accept4(lc->fd, &sa.sockaddr, &socklen, SOCK_NONBLOCK);

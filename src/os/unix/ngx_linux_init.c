@@ -14,13 +14,18 @@ u_char  ngx_linux_kern_osrelease[50];
 
 
 static ngx_os_io_t ngx_linux_io = {
+    /* recv */
 #if (NGX_HAVE_DEMIKERNEL)
     ngx_demikernel_recv,
 #else
     ngx_unix_recv,
 #endif
+    /* recv_chain */
     ngx_readv_chain,
+    /* udp_recv */
     ngx_udp_unix_recv,
+    /* send */
+    /* udp_send */
 #if (NGX_HAVE_DEMIKERNEL)
     ngx_demikernel_send,
     ngx_demikernel_send,
@@ -28,8 +33,14 @@ static ngx_os_io_t ngx_linux_io = {
     ngx_unix_send,
     ngx_udp_unix_send,
 #endif
+    /* udp_send_chain */
     ngx_udp_unix_sendmsg_chain,
-#if (NGX_HAVE_SENDFILE)
+    /* send_chain */
+    /* flags */
+#if (NGX_HAVE_DEMIKERNEL)
+    ngx_demikernel_send_chain,
+    0
+#elif (NGX_HAVE_SENDFILE)
     ngx_linux_sendfile_chain,
     NGX_IO_SENDFILE
 #else

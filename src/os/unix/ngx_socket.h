@@ -22,7 +22,7 @@ typedef int  ngx_socket_t;
 ssize_t ngx_demikernel_recv(ngx_connection_t *c, u_char *buf, size_t size);
 ssize_t ngx_demikernel_recv_chain(ngx_connection_t *c, ngx_chain_t *in, off_t limit);
 ssize_t ngx_demikernel_send(ngx_connection_t *c, u_char *buf, size_t size);
-ssize_t ngx_demikernel_send_chain(ngx_connection_t *c, ngx_chain_t *in, off_t limit);
+ngx_chain_t *ngx_demikernel_send_chain(ngx_connection_t *c, ngx_chain_t *in, off_t limit);
 int ngx_demikernel_socket(int domain, int type, int protocol);
 int ngx_demikernel_getsockopt(int sockfd, int level, int optname, void *optval, socklen_t *optlen);
 int ngx_demikernel_setsockopt(int sockfd, int level, int optname, const void *optval, socklen_t optlen);
