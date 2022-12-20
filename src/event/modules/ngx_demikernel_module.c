@@ -186,7 +186,9 @@ static ngx_int_t
 ngx_demikernel_process_events(ngx_cycle_t *cycle, ngx_msec_t timer, ngx_uint_t flags)
 {
     ngx_err_t           err;
+    ngx_uint_t          level;
     ngx_event_t        *ev;
+    ngx_connection_t   *c;
     ngx_queue_t        *queue;
     demi_qresult_t      qr;
     int                 offset;
@@ -218,20 +220,20 @@ ngx_demikernel_process_events(ngx_cycle_t *cycle, ngx_msec_t timer, ngx_uint_t f
                    "demikernel ready at offset %d of %ui", offset, nqts);
 
     if (err) {
-        // if (err == NGX_EINTR) {
+        if (err == NGX_EINTR) {
 
-        //     if (ngx_event_timer_alarm) {
-        //         ngx_event_timer_alarm = 0;
-        //         return NGX_OK;
-        //     }
+            if (ngx_event_timer_alarm) {
+                ngx_event_timer_alarm = 0;
+                return NGX_OK;
+            }
 
-        //     level = NGX_LOG_INFO;
+            level = NGX_LOG_INFO;
 
-        // } else {
-        //     level = NGX_LOG_ALERT;
-        // }
+        } else {
+            level = NGX_LOG_ALERT;
+        }
 
-        ngx_log_error(NGX_LOG_ALERT, cycle->log, err, "demikernel() failed");
+        ngx_log_error(level, cycle->log, err, "demikernel() failed");
         return NGX_ERROR;
     }
 
@@ -256,7 +258,20 @@ ngx_demikernel_process_events(ngx_cycle_t *cycle, ngx_msec_t timer, ngx_uint_t f
 
     case DEMI_OPC_ACCEPT:
         ev->dmkr.qr_value.ares = qr.qr_value.ares;
-        // TODO
+
+        c = ev->data;
+        err = demi_accept(&qts[nqts], c->fd);
+
+        if (err) {
+            ngx_log_error(NGX_LOG_ALERT, cycle->log, err,
+                        "fail to accept again");
+            return NGX_ERROR;
+        }
+
+        ev->index = nqts;
+        evs[nqts] = ev;
+        nqts++;
+
         break;
 
     case DEMI_OPC_CONNECT:
