@@ -220,7 +220,7 @@ ngx_demikernel_process_events(ngx_cycle_t *cycle, ngx_msec_t timer, ngx_uint_t f
                    "demikernel ready at offset %d of %ui", offset, nqts);
 
     if (err) {
-        if (err == NGX_EINTR) {
+        if (err == NGX_ETIMEDOUT) {
 
             if (ngx_event_timer_alarm) {
                 ngx_event_timer_alarm = 0;
@@ -242,10 +242,15 @@ ngx_demikernel_process_events(ngx_cycle_t *cycle, ngx_msec_t timer, ngx_uint_t f
     qts[offset] = qts[nqts];
     evs[offset] = evs[nqts];
     evs[offset]->index = offset;
+    ev->active = 0;
+    ev->index = NGX_INVALID_INDEX;
 
     switch (qr.qr_opcode) {
 
     case DEMI_OPC_PUSH:
+        ev->ready = 1;
+        demi_sgafree(&ev->dmkr.qr_value.sga);
+
         // TODO
         break;
 
@@ -253,6 +258,11 @@ ngx_demikernel_process_events(ngx_cycle_t *cycle, ngx_msec_t timer, ngx_uint_t f
         ev->dmkr.qr_value.sga = qr.qr_value.sga;
         ev->available = qr.qr_value.sga.sga_segs[0].sgaseg_len;
         ev->ready = 1;
+
+        if (ev->available == 0) {
+            ev->pending_eof = 1;
+        }
+
         // TODO
         break;
 

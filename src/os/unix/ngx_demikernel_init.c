@@ -2,6 +2,8 @@
 #include <ngx_core.h>
 #include <ngx_event.h>
 
+#define NGX_DEMIKERNEL_MAX_SEND_SIZE 1200
+
 ssize_t
 ngx_demikernel_recv(ngx_connection_t *c, u_char *buf, size_t size)
 {
@@ -175,8 +177,8 @@ ngx_demikernel_send_chain(ngx_connection_t *c, ngx_chain_t *in, off_t limit)
 
     /* the maximum limit size is the maximum size_t value - the page size */
 
-    if (limit == 0 || limit > (off_t) (NGX_MAX_SIZE_T_VALUE - ngx_pagesize)) {
-        limit = NGX_MAX_SIZE_T_VALUE - ngx_pagesize;
+    if (limit == 0 || limit > NGX_DEMIKERNEL_MAX_SEND_SIZE) {
+        limit = NGX_DEMIKERNEL_MAX_SEND_SIZE;
     }
 
     send = 0;
